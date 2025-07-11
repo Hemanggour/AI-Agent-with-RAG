@@ -1,0 +1,7 @@
+__pycache__/
+.venv/
+
+vectorstore/
+
+.env
+test_run.py
