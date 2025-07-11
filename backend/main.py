@@ -21,6 +21,6 @@ app.add_middleware(
 # Routes
 app.include_router(router)
 
-# # 👇 Start ngrok tunnel
+# #Start ngrok tunnel
 # public_url = ngrok.connect(8000)
-# print(f"🔗 Public ngrok URL: {public_url}")
+# print(f"Public ngrok URL: {public_url}")

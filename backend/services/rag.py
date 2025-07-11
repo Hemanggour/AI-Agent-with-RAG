@@ -7,22 +7,21 @@ CHROMA_PATH = "vectorstore"
 
 
 def load_and_index_docs(doc_path: str = "data/Indian-Accounting-Standards-IND-AS.pdf"):
-    # 1. Load the PDF
+    # Load PDF
     loader = PyMuPDFLoader(doc_path)
     docs = loader.load()
-    print(f"Loaded Doc:\m{docs[0]}\n")
 
-    # 2. Split into chunks
+    # Split into chunks
     splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=20)
     chunks = splitter.split_documents(docs)
 
-    # 3. Embed with Gemini
+    # Embed with Gemini
     embeddings = get_gemini_embeddings()
 
-    # 4. Store in Chroma
+    # Store in Chroma
     vectordb = Chroma.from_documents(documents=chunks, embedding=embeddings, persist_directory=CHROMA_PATH)
     vectordb.persist()
-    print("✅ Vector store created.")
+    print("Vector store created.")
 
 
 def get_retriever():

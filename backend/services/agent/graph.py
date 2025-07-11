@@ -10,6 +10,7 @@ class AgentState(TypedDict):
     final_prompt: Optional[str] = None
 
 
+# Create the agent graph
 def get_langgraph():
     builder = StateGraph(AgentState)
 
