@@ -96,7 +96,7 @@ python launch.py --online
 
 - **Backend only:**  
   ```sh
-  uvicorn backend.main:app --reload
+  uvicorn backend.main:app --reload --port 8000
   ```
 - **Frontend only (local):**  
   ```sh
