@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
+
 from backend.services.rag import get_retriever
 
 load_dotenv()
