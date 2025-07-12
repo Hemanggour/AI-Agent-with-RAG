@@ -186,4 +186,4 @@ Built with FastAPI, Streamlit, Google Gemini, and LangChain / LangGraph.
 
 ---
 
-**Enjoy your AI-powered document
+**Enjoy your AI-powered document**

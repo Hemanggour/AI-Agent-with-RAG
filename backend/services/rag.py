@@ -1,5 +1,5 @@
-from langchain.document_loaders import PyMuPDFLoader
-from langchain.vectorstores import Chroma
+from langchain_community.document_loaders import PyMuPDFLoader
+from langchain_community.vectorstores import Chroma
 from langchain_experimental.text_splitter import SemanticChunker
 
 from .embeddings import get_gemini_embeddings
