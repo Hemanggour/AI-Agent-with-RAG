@@ -1,6 +1,9 @@
-from typing import TypedDict, Optional
-from langgraph.graph import StateGraph, END
-from .nodes import retrieve_docs, build_prompt, llm_inference
+from typing import Optional, TypedDict
+
+from langgraph.graph import END, StateGraph
+
+from .nodes import build_prompt, llm_inference, retrieve_docs
+
 
 # Define state schema
 class AgentState(TypedDict):

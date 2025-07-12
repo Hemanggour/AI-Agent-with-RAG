@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import router
 
-# 👇 Ngrok import
-from pyngrok import ngrok
+from backend.api.routes import router
+
+# from pyngrok import ngrok
+
 
 app = FastAPI(
     title="Accounting AI Assistant",
@@ -13,7 +14,7 @@ app = FastAPI(
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change to specific frontend in prod
+    allow_origins=["*"],  # We can change this with frotnend url in prod
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -22,5 +23,5 @@ app.add_middleware(
 app.include_router(router)
 
 # #Start ngrok tunnel
-# public_url = ngrok.connect(8000)
+# public_url = ngrok.connect(8000, authtoken_from_env=True)
 # print(f"Public ngrok URL: {public_url}")

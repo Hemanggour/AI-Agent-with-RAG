@@ -1,5 +1,5 @@
-import streamlit as st
 import requests
+import streamlit as st
 
 st.set_page_config(page_title="Accounting AI Assistant", layout="centered")
 
@@ -7,7 +7,9 @@ st.title("Accounting AI Assistant")
 st.markdown("Ask anything about Indian Accounting Standards (IND AS)")
 
 # Backend API URL
-API_URL = "http://localhost:8000/chat"  # We can replace this URL with hosted backend url
+API_URL = (
+    "http://localhost:8000/chat"  # We can replace this URL with hosted backend url
+)
 
 
 # Initialize session state for chat
@@ -18,15 +20,16 @@ if "chat_history" not in st.session_state:
 # Chat UI
 def send_message(user_input):
     st.session_state.chat_history.append({"role": "user", "content": user_input})
-    
+
     try:
         res = requests.post(API_URL, json={"message": user_input})
         res.raise_for_status()
         bot_reply = res.json()["response"]
     except Exception as e:
         bot_reply = f"Error: {e}"
-    
+
     st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
+
 
 def handle_input(user_input):
     if user_input:

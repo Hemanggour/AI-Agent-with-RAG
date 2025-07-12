@@ -4,4 +4,5 @@ __pycache__/
 vectorstore/
 
 .env
-test_run.py
+# test_run.py
+qa.bat

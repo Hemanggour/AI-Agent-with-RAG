@@ -20,3 +20,6 @@ pydantic
 
 # CORS
 httpx
+
+# NGROk
+ngrok
