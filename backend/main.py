@@ -1,10 +1,11 @@
+# import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.routes import router
 
 # from pyngrok import ngrok
-
+# from pyngrok.conf import PyngrokConfig
 
 app = FastAPI(
     title="Accounting AI Assistant",
@@ -23,5 +24,6 @@ app.add_middleware(
 app.include_router(router)
 
 # #Start ngrok tunnel
-# public_url = ngrok.connect(8000, authtoken_from_env=True)
+# pyngrok_config = PyngrokConfig(auth_token=os.getenv("NGROK_AUTHTOKEN"))
+# public_url = ngrok.connect(8000, pyngrok_config=pyngrok_config)
 # print(f"Public ngrok URL: {public_url}")
