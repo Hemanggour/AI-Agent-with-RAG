@@ -28,7 +28,6 @@ def build_prompt(state):
 
 
 def llm_inference(state):
-    print(f"context:\n{state}\n")
     response = llm.invoke(state["final_prompt"])
     state["response"] = response.content
     return state

@@ -1,6 +1,9 @@
+from dotenv import load_dotenv
 import subprocess
 
 from pyngrok import ngrok
+
+load_dotenv()
 
 # Start ngrok tunnel
 public_url = ngrok.connect(8501, authtoken_from_env=True)
