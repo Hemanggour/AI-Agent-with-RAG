@@ -7,7 +7,6 @@ from backend.api.routes import router
 # from pyngrok import ngrok
 # from pyngrok.conf import PyngrokConfig
 
-
 app = FastAPI(
     title="Accounting AI Assistant",
     description="FastAPI backend for LangGraph + Gemini RAG assistant",
