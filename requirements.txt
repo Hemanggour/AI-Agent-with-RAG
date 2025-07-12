@@ -3,6 +3,7 @@ langchain
 langgraph
 langchain-google-genai
 langchain-community
+langchain-experimental
 chromadb
 
 # PDF/Text handling

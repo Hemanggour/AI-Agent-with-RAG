@@ -133,7 +133,7 @@ python launch.py --online
 To verify your setup, run:
 
 ```sh
-python backend/test_run.py
+python test_run.py
 ```
 
 ---
@@ -158,7 +158,6 @@ AI-Agent-with-RAG/
 │   ├── main.py            # FastAPI backend
 │   ├── api/               # API routes
 │   ├── populate_db.py     # Script to index PDFs
-│   ├── test_run.py        # Test script
 │   └── ...
 ├── frontend/
 │   ├── app.py             # Streamlit frontend
@@ -167,6 +166,7 @@ AI-Agent-with-RAG/
 ├── data/                  # Place your PDFs here
 ├── vectorstore/           # Vector DB files (auto-generated)
 ├── launch.py              # One-command launcher
+├── test_run.py            # Test script
 ├── requirements.txt
 ├── .env
 └── README.md
