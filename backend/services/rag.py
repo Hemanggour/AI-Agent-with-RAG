@@ -1,5 +1,5 @@
 from langchain.document_loaders import PyMuPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_experimental.text_splitter import SemanticChunker
 from langchain.vectorstores import Chroma
 
 from .embeddings import get_gemini_embeddings
@@ -10,16 +10,21 @@ CHROMA_PATH = "vectorstore"
 def load_and_index_docs(doc_path: str):
     # Load PDF
     loader = PyMuPDFLoader(doc_path)
-    docs = loader.load()
+    pages = loader.load()
 
-    # Split into chunks
-    splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=20)
-    chunks = splitter.split_documents(docs)
+    page_texts = [doc.page_content for doc in pages]
 
-    # Embed with Gemini
+    # Set up embedding model
     embeddings = get_gemini_embeddings()
 
-    # Store in Chroma
+    chunker = SemanticChunker(
+        embeddings,
+        breakpoint_threshold_type="percentile",
+        breakpoint_threshold_amount=90
+    )
+
+    chunks = chunker.create_documents(page_texts)
+
     vectordb = Chroma.from_documents(
         documents=chunks, embedding=embeddings, persist_directory=CHROMA_PATH
     )
@@ -30,4 +35,7 @@ def load_and_index_docs(doc_path: str):
 def get_retriever():
     embeddings = get_gemini_embeddings()
     vectordb = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
-    return vectordb.as_retriever()
+    return vectordb.as_retriever(
+        search_type="similarity",
+        search_kwargs={"k": 5}
+    )
