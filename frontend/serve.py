@@ -1,6 +1,6 @@
-from dotenv import load_dotenv
 import subprocess
 
+from dotenv import load_dotenv
 from pyngrok import ngrok
 
 load_dotenv()

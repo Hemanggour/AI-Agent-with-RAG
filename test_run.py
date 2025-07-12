@@ -1,4 +1,4 @@
-from services.agent.graph import AgentState, get_langgraph
+from backend.services.agent.graph import AgentState, get_langgraph
 
 graph = get_langgraph()
 
