@@ -1,4 +1,4 @@
-# MindsMap AI Assistant
+# AI Agent with RAG pipeline
 
 An AI-powered document Q&A assistant enriched with a Retrieval-Augmented Generation (RAG) pipeline. This project leverages Google Gemini LLM and custom document embeddings to provide accurate, context-aware answers from your own PDF files. Easily run locally or share online via ngrok.
 
@@ -28,8 +28,8 @@ An AI-powered document Q&A assistant enriched with a Retrieval-Augmented Generat
 ### 1. Clone the Repository
 
 ```sh
-git clone https://github.com/yourusername/MindsMap-AI-Project.git
-cd MindsMap-AI-Project
+git clone https://github.com/Hemanggour/AI-Agent-with-RAG.git
+cd AI-Agent-with-RAG
 ```
 
 ### 2. Install Dependencies
@@ -148,7 +148,7 @@ python backend/test_run.py
 ## Project Structure
 
 ```
-MindsMap-AI-Project/
+AI-Agent-with-RAG/
 │
 ├── backend/
 │   ├── main.py            # FastAPI backend
