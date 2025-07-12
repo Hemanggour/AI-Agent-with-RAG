@@ -82,7 +82,7 @@ python launch.py
 
 ---
 
-### Option 2: Online Mode (Frontend via ngrok)
+### Option 2: Online Mode (via ngrok)
 
 Share your assistant online (ngrok public URL will be shown in the terminal):
 
@@ -120,7 +120,11 @@ python launch.py --online
   }
   ```
 - **Response:**  
-  JSON with the AI's answer.
+  ```json
+  {
+    "response": "AGENT_RESPONSE"
+  }
+  ```
 
 ---
 

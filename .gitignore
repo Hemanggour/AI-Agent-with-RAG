@@ -4,5 +4,6 @@ __pycache__/
 vectorstore/
 
 .env
-# test_run.py
 qa.bat
+
+RAG_test.py

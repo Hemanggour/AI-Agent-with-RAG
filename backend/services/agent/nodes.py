@@ -14,7 +14,7 @@ prompt_template = get_prompt_template()
 
 def retrieve_docs(state):
     query = state["message"]
-    docs = retriever.get_relevant_documents(query)
+    docs = retriever.invoke(query)
     context = "\n\n".join([doc.page_content for doc in docs])
     state["context"] = context
     return state
@@ -28,7 +28,7 @@ def build_prompt(state):
 
 
 def llm_inference(state):
-    print(f"context:\n{state}\n")
+    print(f"CONTEXT:\n{state["context"]}\n")
     response = llm.invoke(state["final_prompt"])
     state["response"] = response.content
     return state
