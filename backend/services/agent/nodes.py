@@ -74,7 +74,8 @@ def call_llm_tool(state):
 
     local_llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.8)
 
-    system_prompt = """You are an expert AI assistant with advanced reasoning capabilities, respond to the user query in human like format."""  # noqa
+    system_prompt = """You are an expert AI assistant with advanced reasoning capabilities, respond to the user query in human like format.
+    Less then 30 words if not needed. don't try to over explain things."""  # noqa
 
     prompt = f"""{system_prompt}
 
