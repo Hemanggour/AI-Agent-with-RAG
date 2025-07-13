@@ -41,7 +41,7 @@ def should_use_tool_condition(state):
     - "Can you analyze this financial data and provide insights?" → LLM_TOOL
     - "Hello, how are you?" → DIRECT
 
-    Answer with only one of: RAG_REQUIRED, LLM_TOOL, or DIRECT"""
+    Answer with only one of: RAG_REQUIRED, LLM_TOOL, or DIRECT"""  # noqa
 
     prompt = f"{system_prompt}\n\nQuestion: {message}\n\nCategory:"
 
@@ -108,12 +108,12 @@ def check_context_relevance_condition(state):
 
     system_prompt = """You are evaluating whether the provided context contains sufficient information to answer the user's question accurately and completely.
 
-    Consider:
-    - Does the context directly address the question?
-    - Is there enough detail to provide a comprehensive answer?
-    - Is the information relevant and up-to-date?
+Consider:
+- Does the context directly address the question?
+- Is there enough detail to provide a comprehensive answer?
+- Is the information relevant and up-to-date?
 
-    Answer with only 'SUFFICIENT' if the context is adequate, or 'INSUFFICIENT' if more or different information is needed."""
+Answer with only 'SUFFICIENT' if the context is adequate, or 'INSUFFICIENT' if more or different information is needed."""  # noqa
 
     prompt = f"""{system_prompt}
 
@@ -143,7 +143,7 @@ def refine_query(state):
     - Focuses on specific aspects of the question
     - Might retrieve more relevant documents
 
-    Provide only the improved search query, nothing else."""
+    Provide only the improved search query, nothing else."""  # noqa
 
     prompt = f"""{system_prompt}
 
@@ -171,7 +171,7 @@ def generate_rag_answer(state):
     - Base your answer primarily on the provided context
     - If the context doesn't fully address the question, acknowledge the limitations
     - Provide clear, structured responses
-    - Include specific details when available"""
+    - Include specific details when available"""  # noqa
 
     prompt = f"""{system_prompt}
 
@@ -203,7 +203,7 @@ def generate_llm_tool_answer(state):
     - Well-structured and clear
     - Appropriate for the user's question
 
-    If the response is already good, return it as is. If it needs refinement, improve it."""
+    If the response is already good, return it as is. If it needs refinement, improve it."""  # noqa
 
     prompt = f"""{system_prompt}
 
@@ -227,7 +227,7 @@ def generate_direct_answer(state):
 
     system_prompt = """You are a helpful AI assistant. Answer the user's question directly and concisely.
 
-    For simple questions, provide a straightforward response without unnecessary complexity."""
+    For simple questions, provide a straightforward response without unnecessary complexity."""  # noqa
 
     prompt = f"""{system_prompt}
 
