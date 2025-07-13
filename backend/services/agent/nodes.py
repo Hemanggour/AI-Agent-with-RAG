@@ -74,18 +74,7 @@ def call_llm_tool(state):
 
     local_llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.8)
 
-    system_prompt = """You are an expert AI assistant with advanced reasoning capabilities.
-
-    The user has asked a question that requires:
-    - Analysis or reasoning
-    - Creative thinking
-    - Problem-solving
-    - Calculations or logical processing
-    - General knowledge application
-
-    Provide a comprehensive, well-structured response that addresses the user's question thoroughly.
-    Use your knowledge and reasoning capabilities to give the best possible answer.
-    This will be the final response to the user, so make it complete and helpful."""
+    system_prompt = """You are an expert AI assistant with advanced reasoning capabilities, respond to the user query in human like format."""  # noqa
 
     prompt = f"""{system_prompt}
 
