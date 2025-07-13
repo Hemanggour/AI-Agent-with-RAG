@@ -1,3 +1,5 @@
+# nodes.py
+
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 
@@ -5,7 +7,7 @@ from backend.services.rag import get_retriever
 
 load_dotenv()
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.2)
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.8)
 retriever = get_retriever()
 
 # Maximum number of RAG calls to prevent infinite loops
@@ -21,29 +23,36 @@ def analyze_question(state):
     return state
 
 
-# 2. Condition: Should the LLM use a tool (RAG)?
+# 2. Condition: Should the LLM use a tool (RAG or LLM)?
 def should_use_tool_condition(state):
-    """Determine if RAG tool should be used based on question analysis"""
+    """Determine if RAG tool, LLM tool, or direct answer should be used"""
     message = state["message"]
 
     # Use LLM to make this decision more intelligently
-    system_prompt = """You are an AI assistant that determines if a question requires retrieving information from a knowledge base.
+    system_prompt = """You are an AI assistant that determines the best approach to answer a user's question.
 
-    Analyze the user's question and determine if it:
-    - Asks for specific information, facts, or explanations
-    - Requires knowledge about specific topics, standards, or procedures
-    - Needs contextual information to provide a complete answer
+    Analyze the user's question and categorize it as:
+    1. RAG_REQUIRED - Questions that need specific information from a knowledge base (facts, standards, procedures, specific domain knowledge)
+    2. LLM_TOOL - Questions that need general reasoning, analysis, calculations, or creative responses but don't require specific knowledge retrieval
+    3. DIRECT - Simple questions that can be answered directly without tools
 
-    Answer with only 'YES' if the question requires knowledge retrieval, or 'NO' if it's a general question that can be answered without specific context."""  # noqa
+    Examples:
+    - "What is the accounting standard for inventory?" → RAG_REQUIRED
+    - "Can you analyze this financial data and provide insights?" → LLM_TOOL
+    - "Hello, how are you?" → DIRECT
 
-    prompt = f"{system_prompt}\n\nQuestion: {message}\n\nRequires knowledge retrieval:"
+    Answer with only one of: RAG_REQUIRED, LLM_TOOL, or DIRECT"""  # noqa
 
-    result = llm.invoke(prompt).content.lower().strip()
+    prompt = f"{system_prompt}\n\nQuestion: {message}\n\nCategory:"
 
-    if "yes" in result:
-        return "use_tool"
+    result = llm.invoke(prompt).content.strip().upper()
+
+    if "RAG_REQUIRED" in result:
+        return "use_rag"
+    elif "LLM_TOOL" in result:
+        return "use_llm_tool"
     else:
-        return "skip_tool"
+        return "direct_answer"
 
 
 # 3. RAG tool node
@@ -60,7 +69,36 @@ def call_rag_tool(state):
     return state
 
 
-# 4. Condition: Is the retrieved context relevant and sufficient?
+# 4. LLM tool node
+def call_llm_tool(state):
+    """Use LLM as a tool for reasoning, analysis, or creative tasks"""
+    print("Using LLM call tool")
+    system_prompt = """You are an expert AI assistant with advanced reasoning capabilities.
+
+    The user has asked a question that requires:
+    - Analysis or reasoning
+    - Creative thinking
+    - Problem-solving
+    - Calculations or logical processing
+    - General knowledge application
+
+    Provide a comprehensive, well-structured response that addresses the user's question thoroughly.
+    Use your knowledge and reasoning capabilities to give the best possible answer."""
+
+    prompt = f"""{system_prompt}
+
+User Question: {state['message']}
+
+Please provide a detailed response:"""
+
+    response = llm.invoke(prompt)
+    state["llm_tool_response"] = response.content.strip()
+    state["tool_calls"] += 1
+
+    return state
+
+
+# 5. Condition: Is the retrieved context relevant and sufficient?
 def check_context_relevance_condition(state):
     """Check if the retrieved context is sufficient to answer the question"""
 
@@ -70,12 +108,12 @@ def check_context_relevance_condition(state):
 
     system_prompt = """You are evaluating whether the provided context contains sufficient information to answer the user's question accurately and completely.
 
-    Consider:
-    - Does the context directly address the question?
-    - Is there enough detail to provide a comprehensive answer?
-    - Is the information relevant and up-to-date?
+Consider:
+- Does the context directly address the question?
+- Is there enough detail to provide a comprehensive answer?
+- Is the information relevant and up-to-date?
 
-    Answer with only 'SUFFICIENT' if the context is adequate, or 'INSUFFICIENT' if more or different information is needed."""  # noqa
+Answer with only 'SUFFICIENT' if the context is adequate, or 'INSUFFICIENT' if more or different information is needed."""  # noqa
 
     prompt = f"""{system_prompt}
 
@@ -94,7 +132,7 @@ Context assessment:"""
         return "not_relevant"
 
 
-# 5. Refine query for better RAG results
+# 6. Refine query for better RAG results
 def refine_query(state):
     """Generate a better search query based on previous results"""
 
@@ -121,23 +159,21 @@ Improved search query:"""
     return state
 
 
-# 6. Generate final answer
-def generate_final_answer(state):
-    """Generate the final response using available context"""
+# 7. Generate final answer with RAG context
+def generate_rag_answer(state):
+    """Generate the final response using RAG context"""
 
-    if state.get("context"):
-        # Answer using context
-        system_prompt = """You are an expert assistant specializing in Indian Accounting Standards and related topics.
+    system_prompt = """You are an expert assistant specializing in Indian Accounting Standards and related topics.
 
-        Use the provided context to answer the user's question accurately and comprehensively.
+    Use the provided context to answer the user's question accurately and comprehensively.
 
-        Guidelines:
-        - Base your answer primarily on the provided context
-        - If the context doesn't fully address the question, acknowledge the limitations
-        - Provide clear, structured responses
-        - Include specific details when available"""  # noqa
+    Guidelines:
+    - Base your answer primarily on the provided context
+    - If the context doesn't fully address the question, acknowledge the limitations
+    - Provide clear, structured responses
+    - Include specific details when available"""  # noqa
 
-        prompt = f"""{system_prompt}
+    prompt = f"""{system_prompt}
 
 Question: {state['message']}
 
@@ -145,13 +181,55 @@ Context:
 {state['context']}
 
 Answer:"""
-    else:
-        # Answer without context (for simple questions)
-        system_prompt = """You are an expert assistant. Answer the user's question based on your general knowledge.
 
-        Provide a helpful, accurate response. If you're not certain about specific details, acknowledge the uncertainty."""  # noqa
+    response = llm.invoke(prompt)
+    state["response"] = response.content.strip()
+    state["satisfied"] = True
 
-        prompt = f"""{system_prompt}
+    return state
+
+
+# 8. Generate final answer with LLM tool response
+def generate_llm_tool_answer(state):
+    """Generate the final response using LLM tool output"""
+
+    # The LLM tool has already generated a response, so we can use it directly
+    # or optionally refine it further
+
+    system_prompt = """You are reviewing and potentially refining a response generated by an AI tool.
+
+    The response should be:
+    - Accurate and helpful
+    - Well-structured and clear
+    - Appropriate for the user's question
+
+    If the response is already good, return it as is. If it needs refinement, improve it."""  # noqa
+
+    prompt = f"""{system_prompt}
+
+Original Question: {state['message']}
+
+Generated Response:
+{state['llm_tool_response']}
+
+Final Response:"""
+
+    response = llm.invoke(prompt)
+    state["response"] = response.content.strip()
+    state["satisfied"] = True
+
+    return state
+
+
+# 9. Generate direct answer
+def generate_direct_answer(state):
+    """Generate a direct response for simple questions"""
+
+    system_prompt = """You are a helpful AI assistant. Answer the user's question directly and concisely.
+
+    For simple questions, provide a straightforward response without unnecessary complexity."""  # noqa
+
+    prompt = f"""{system_prompt}
 
 Question: {state['message']}
 
