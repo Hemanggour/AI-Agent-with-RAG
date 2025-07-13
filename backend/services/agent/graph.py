@@ -1,9 +1,5 @@
-# graph.py
-
 from typing import Optional, TypedDict
-
 from langgraph.graph import END, StateGraph
-
 from .nodes import (
     analyze_question,
     call_llm_tool,
@@ -12,6 +8,7 @@ from .nodes import (
     generate_rag_answer,
     refine_query,
     should_use_tool_condition,
+    polite_refusal,
 )
 
 
@@ -33,17 +30,18 @@ def get_langgraph():
     builder.add_node("call_llm_tool", call_llm_tool)
     builder.add_node("refine_query", refine_query)
     builder.add_node("generate_rag_answer", generate_rag_answer)
+    builder.add_node("polite_refusal", polite_refusal)
 
     # Set entry point
     builder.set_entry_point("analyze_question")
 
-    # Add conditional edges - now only two options
+    # Add conditional edges - route to RAG for Indian accountancy or polite refusal for other topics
     builder.add_conditional_edges(
         "analyze_question",
         should_use_tool_condition,
         {
             "use_rag": "call_rag_tool",
-            "use_llm_tool": "call_llm_tool",
+            "use_llm_tool": "polite_refusal",
         },
     )
 
@@ -58,7 +56,7 @@ def get_langgraph():
     builder.add_edge("refine_query", "call_rag_tool")
     builder.add_edge("generate_rag_answer", END)
 
-    # LLM tool now goes directly to END
-    builder.add_edge("call_llm_tool", END)
+    # Polite refusal goes directly to END
+    builder.add_edge("polite_refusal", END)
 
     return builder.compile()
